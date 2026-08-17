@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="tr" class="dark h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Görev & Analiz Yönetim Paneli</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Boxicons CDN -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        /* --- LOGIN/REGISTER MODAL STİLLERİ --- */
+        .login-card-container {
+            position: relative;
+            width: 800px;
+            max-width: 95vw;
+            height: 520px;
+            background: #090d16;
+            border: 1px solid #1e293b;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+        }
+
+        .login-card-container .content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 55%;
+            height: 100%;
+            padding: 50px 40px;
+            color: #e4e4e4;
+            display: flex;
+            justify-content: space-between;
+            flex-direction: column;
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.15), rgba(15, 23, 42, 0.9));
+        }
+
+        .content .logo {
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #6366f1;
+        }
+
+        .text-sci h2 {
+            font-size: 32px;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .text-sci h2 span {
+            font-size: 20px;
+            font-weight: 500;
+            color: #818cf8;
+        }
+
+        .text-sci p {
+            font-size: 13px;
+            margin: 15px 0;
+            color: #94a3b8;
+        }
+
+        .social-icons a i {
+            font-size: 20px;
+            color: #e4e4e4;
+            margin-right: 12px;
+            transition: .3s ease;
+        }
+
+        .social-icons a:hover i {
+            transform: scale(1.2);
+            color: #6366f1;
+        }
+
+        .login-card-container .logreg-box {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 45%;
+            height: 100%;
+            overflow: hidden;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .logreg-box .form-box {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            padding: 0 35px;
+            color: #e4e4e4;
+        }
+
+        .logreg-box .form-box.login {
+            transform: translateX(0);
+            transition: transform .6s ease;
+            transition-delay: .5s;
+        }
+
+        .logreg-box.active .form-box.login {
+            transform: translateX(400px);
+            transition-delay: 0s;
+        }
+
+        .logreg-box .form-box.register {
+            transform: translateX(400px);
+            transition: transform .6s ease;
+            transition-delay: 0s;
+        }
+
+        .logreg-box.active .form-box.register {
+            transform: translateX(0);
+            transition-delay: .5s;
+        }
+
+        .form-box form {
+            width: 100%;
+        }
+
+        .form-box h2 {
+            font-size: 26px;
+            text-align: center;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .form-box .input-box {
+            position: relative;
+            width: 100%;
+            height: 45px;
+            border-bottom: 2px solid #475569;
+            margin: 20px 0;
+        }
+
+        .input-box input {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 14px;
+            color: #e4e4e4;
+            font-weight: 500;
+            padding-right: 28px;
+        }
+
+        .input-box label {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            font-size: 14px;
+            font-weight: 500;
+            color: #94a3b8;
+            pointer-events: none;
+            transition: .3s ease;
+        }
+
+        .input-box input:focus~label,
+        .input-box input:valid~label {
+            top: -5px;
+            font-size: 12px;
+            color: #6366f1;
+        }
+
+        .input-box .icon {
+            position: absolute;
+            top: 12px;
+            right: 0;
+            font-size: 18px;
+            color: #94a3b8;
+        }
+
+        .form-box .remember-forgot {
+            font-size: 12px;
+            font-weight: 500;
+            margin: -10px 0 20px;
+            display: flex;
+            justify-content: space-between;
+            color: #94a3b8;
+        }
+
+        .remember-forgot label input {
+            accent-color: #6366f1;
+            margin-right: 4px;
+        }
+
+        .remember-forgot a {
+            color: #818cf8;
+            text-decoration: none;
+        }
+
+        .remember-forgot a:hover {
+            text-decoration: underline;
+        }
+
+        .login-btn-submit {
+            width: 100%;
+            height: 42px;
+            background: #4f46e5;
+            border: none;
+            outline: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
+            transition: .3s ease;
+        }
+
+        .login-btn-submit:hover {
+            background: #4338ca;
+        }
+
+        .form-box .login-register {
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+            margin-top: 15px;
+            color: #94a3b8;
+        }
+
+        .login-register p a {
+            color: #818cf8;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .login-register p a:hover {
+            text-decoration: underline;
+        }
+
+        .close-modal-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            color: #94a3b8;
+            cursor: pointer;
+            z-index: 100;
+            transition: .2s ease;
+        }
+
+        .close-modal-btn:hover {
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body class="h-full flex overflow-hidden font-sans bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-300">
+
+    <!-- SOL MENÜ / SIDEBAR -->
+    <aside class="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col justify-between shrink-0 transition-colors duration-300">
+        <div>
+            <!-- Logo -->
+            <div class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-800 gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
+                    <i class="fa-solid fa-chart-pie text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-slate-800 dark:text-slate-100 leading-none">TaskFlow</h1>
+                    <span id="txt-app-subtitle" class="text-xs text-slate-500 dark:text-slate-400">Görev & Analiz</span>
+                </div>
+            </div>
+
+            <!-- Menü Linkleri -->
+            <nav class="p-4 space-y-1">
+                <button onclick="switchTab('tasks')" id="nav-tasks" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all bg-indigo-600 text-white shadow-lg shadow-indigo-600/20">
+                    <i class="fa-solid fa-list-check w-5 text-center text-base"></i>
+                    <span id="txt-nav-tasks">Görevler</span>
+                    <span id="task-badge" class="ml-auto bg-indigo-800/80 text-indigo-200 text-xs px-2 py-0.5 rounded-full">0</span>
+                </button>
+
+                <button onclick="switchTab('analytics')" id="nav-analytics" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60">
+                    <i class="fa-solid fa-chart-pie w-5 text-center text-base"></i>
+                    <span id="txt-nav-analytics">Analizler</span>
+                </button>
+
+                <button onclick="switchTab('settings')" id="nav-settings" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60">
+                    <i class="fa-solid fa-sliders w-5 text-center text-base"></i>
+                    <span id="txt-nav-settings">Ayarlar</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Alt Kullanıcı Bilgisi -->
+        <div class="p-4 border-t border-slate-200 dark:border-slate-800">
+            <div class="flex items-center gap-3 p-2 rounded-xl bg-slate-100 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800">
+                <div class="w-10 h-10 rounded-lg bg-indigo-500/20 text-indigo-500 dark:text-indigo-400 flex items-center justify-center font-bold">
+                    <i class="fa-solid fa-chart-pie text-lg"></i>
+                </div>
+                <div class="overflow-hidden">
+                    <p id="sidebar-user-name" class="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">Misafir Kullanıcı</p>
+                    <p id="txt-user-role" class="text-xs text-slate-500 dark:text-slate-400 truncate">Proje Yöneticisi</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ANA İÇERİK ALANI -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+        
+        <!-- ÜST BAR -->
+        <header class="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/50 backdrop-blur-md px-8 flex items-center justify-between shrink-0 transition-colors duration-300">
+            <div class="flex items-center gap-3">
+                <h2 id="page-title" class="text-xl font-bold text-slate-800 dark:text-slate-100">Görev Yönetimi</h2>
+                <span id="page-subtitle" class="text-xs px-2.5 py-1 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-700">Tüm Aktif Görevler</span>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <!-- DİL SEÇİM BUTONU (i18n TR/EN) -->
+                <button onclick="toggleLanguage()" id="lang-toggle-btn" class="flex items-center justify-center gap-1.5 px-3 h-10 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 rounded-xl transition-all cursor-pointer shadow-sm text-xs font-semibold" title="Dil Değiştir / Change Language">
+                    <i class="fa-solid fa-globe text-sm"></i>
+                    <span id="lang-btn-text">TR</span>
+                </button>
+
+                <!-- GECE-GÜNDÜZ MODU BUTONU -->
+                <button onclick="toggleTheme()" id="theme-toggle-btn" class="flex items-center justify-center w-10 h-10 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-amber-400 border border-slate-300 dark:border-slate-700 rounded-xl transition-all cursor-pointer shadow-sm" title="Gece/Gündüz Modu">
+                    <i id="theme-toggle-icon" class="fa-solid fa-sun text-base"></i>
+                </button>
+
+                <!-- YENİ GÖREV BUTONU -->
+                <button onclick="openAddTaskModal()" class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm px-4 py-2 rounded-xl font-medium shadow-md shadow-indigo-600/20 transition-all cursor-pointer">
+                    <i class="fa-solid fa-plus"></i>
+                    <span id="txt-btn-add-task">Yeni Görev</span>
+                </button>
+
+                <!-- GİRİŞ YAP BUTONU -->
+                <button onclick="openLoginModal()" class="flex items-center gap-2 bg-slate-200 dark:bg-cyan-700 hover:bg-slate-300 dark:hover:bg-cyan-800 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 text-sm px-4 py-2 rounded-xl font-medium transition-all cursor-pointer">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                    <span id="txt-btn-login">Giriş Yap</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- İÇERİK PANELLERİ -->
+        <div class="flex-1 overflow-y-auto p-8">
+
+            <!-- 1. GÖREVLER SEKMESİ -->
+            <section id="view-tasks" class="space-y-6">
+                <!-- İstatistik Özeti -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p id="txt-stat-total" class="text-xs font-medium text-slate-500 dark:text-slate-400">Toplam Görev</p>
+                                <h3 id="stat-total" class="text-2xl font-bold text-slate-800 dark:text-slate-100 mt-1">0</h3>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400">
+                                <i class="fa-solid fa-list text-lg"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p id="txt-stat-completed" class="text-xs font-medium text-slate-500 dark:text-slate-400">Tamamlanan</p>
+                                <h3 id="stat-completed" class="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">0</h3>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                                <i class="fa-solid fa-check-circle text-lg"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p id="txt-stat-inprogress" class="text-xs font-medium text-slate-500 dark:text-slate-400">Devam Eden</p>
+                                <h3 id="stat-inprogress" class="text-2xl font-bold text-amber-600 dark:text-amber-400 mt-1">0</h3>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                                <i class="fa-solid fa-spinner text-lg"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p id="txt-stat-pending" class="text-xs font-medium text-slate-500 dark:text-slate-400">Bekleyen</p>
+                                <h3 id="stat-pending" class="text-2xl font-bold text-rose-600 dark:text-rose-400 mt-1">0</h3>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400">
+                                <i class="fa-solid fa-clock text-lg"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtreler ve Arama -->
+                <div class="flex flex-wrap items-center justify-between gap-4 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
+                    <div class="flex items-center gap-2 overflow-x-auto py-1">
+                        <button onclick="filterTasks('all')" id="btn-filter-all" class="filter-btn text-xs px-3.5 py-2 rounded-xl font-medium bg-indigo-600 text-white">Tümü</button>
+                        <button onclick="filterTasks('İş')" id="btn-filter-work" class="filter-btn text-xs px-3.5 py-2 rounded-xl font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200">İş</button>
+                        <button onclick="filterTasks('Kişisel')" id="btn-filter-personal" class="filter-btn text-xs px-3.5 py-2 rounded-xl font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200">Kişisel</button>
+                        <button onclick="filterTasks('Eğitim')" id="btn-filter-education" class="filter-btn text-xs px-3.5 py-2 rounded-xl font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200">Eğitim</button>
+                        <button onclick="filterTasks('Sağlık')" id="btn-filter-health" class="filter-btn text-xs px-3.5 py-2 rounded-xl font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200">Sağlık</button>
+                        <button onclick="filterTasks('Alışveriş')" id="btn-filter-shopping" class="filter-btn text-xs px-3.5 py-2 rounded-xl font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200">Alışveriş</button>
+                    </div>
+
+                    <div class="relative min-w-[240px]">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-xs"></i>
+                        <input type="text" id="task-search" onkeyup="searchTasks()" placeholder="Görevlerde ara..." class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs rounded-xl pl-9 pr-4 py-2 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors">
+                    </div>
+                </div>
+
+                <!-- Görev Listesi Grid -->
+                <div id="tasks-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Görev Kartları Javascript ile yüklenecek -->
+                </div>
+            </section>
+
+            <!-- 2. ANALİZLER SEKMESİ -->
+            <section id="view-analytics" class="space-y-6 hidden">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 id="txt-analytics-title" class="text-lg font-bold text-slate-800 dark:text-slate-100">Kategori ve Durum Analizleri</h3>
+                        <p id="txt-analytics-subtitle" class="text-xs text-slate-500 dark:text-slate-400">Görevlerin kategorilere ve durumlara göre görsel dağılımı</p>
+                    </div>
+                    <button onclick="refreshAnalytics()" class="text-xs bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 px-3 py-2 rounded-xl flex items-center gap-2">
+                        <i class="fa-solid fa-rotate-right"></i> <span id="txt-btn-refresh">Grafiği Yenile</span>
+                    </button>
+                </div>
+
+                <!-- Grafikler Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col justify-between shadow-sm transition-colors duration-300">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h4 id="txt-chart-category-title" class="font-bold text-slate-800 dark:text-slate-200 text-sm">Kategori Bazlı Görev Dağılımı</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Chart.js Pie Chart</p>
+                            </div>
+                            <span class="p-2 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-xs font-semibold">Pie Chart</span>
+                        </div>
+                        
+                        <div class="relative flex items-center justify-center min-h-[300px] my-auto">
+                            <canvas id="categoryPieChart" class="max-h-[280px] max-w-[280px]"></canvas>
+                        </div>
+
+                        <div id="category-legend" class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-800 grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs"></div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col justify-between shadow-sm transition-colors duration-300">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h4 id="txt-chart-status-title" class="font-bold text-slate-800 dark:text-slate-200 text-sm">Görev Durumu Dağılımı</h4>
+                                <p id="txt-chart-status-sub" class="text-xs text-slate-500 dark:text-slate-400">Tamamlanan, Devam Eden ve Bekleyenler</p>
+                            </div>
+                            <span class="p-2 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-semibold">Doughnut Chart</span>
+                        </div>
+
+                        <div class="relative flex items-center justify-center min-h-[300px] my-auto">
+                            <canvas id="statusDoughnutChart" class="max-h-[280px] max-w-[280px]"></canvas>
+                        </div>
+
+                        <div id="status-legend" class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-800 grid grid-cols-3 gap-2 text-xs text-center"></div>
+                    </div>
+                </div>
+
+                <!-- Detaylı Oran Tablosu -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm transition-colors duration-300">
+                    <h4 id="txt-table-title" class="font-bold text-slate-800 dark:text-slate-200 text-sm mb-4">Kategori Detay İstatistikleri</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-slate-700 dark:text-slate-300">
+                            <thead class="bg-slate-100 dark:bg-slate-950 text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider">
+                                <tr>
+                                    <th id="th-category" class="px-4 py-3 rounded-l-xl">Kategori</th>
+                                    <th id="th-count" class="px-4 py-3">Görev Sayısı</th>
+                                    <th id="th-ratio" class="px-4 py-3">Oran (%)</th>
+                                    <th id="th-progress" class="px-4 py-3 rounded-r-xl">İlerleme</th>
+                                </tr>
+                            </thead>
+                            <tbody id="analytics-table-body" class="divide-y divide-slate-200 dark:divide-slate-800/50"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. AYARLAR SEKMESİ -->
+            <section id="view-settings" class="space-y-6 hidden">
+                <div class="max-w-3xl space-y-6">
+                    <!-- Profil Ayarları -->
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-4 shadow-sm transition-colors duration-300">
+                        <h4 id="txt-settings-profile" class="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-user text-indigo-500 dark:text-indigo-400"></i> Kullanıcı Profili
+                        </h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                            <div>
+                                <label id="lbl-settings-name" class="block text-slate-500 dark:text-slate-400 mb-1">Ad Soyad</label>
+                                <input type="text" id="settings-name" value="" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500">
+                            </div>
+                            <div>
+                                <label id="lbl-settings-email" class="block text-slate-500 dark:text-slate-400 mb-1">E-Posta</label>
+                                <input type="email" id="settings-email" value="" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Veri Yönetimi -->
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-4 shadow-sm transition-colors duration-300">
+                        <h4 id="txt-settings-data" class="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-database text-indigo-500 dark:text-indigo-400"></i> Veri Yönetimi
+                        </h4>
+                        <p id="txt-settings-data-desc" class="text-xs text-slate-500 dark:text-slate-400">Sistemdeki verileri sıfırlayabilir veya varsayılan örnek görevleri yükleyebilirsiniz.</p>
+                        
+                        <div class="flex flex-wrap gap-3 pt-2">
+                            <button onclick="loadSampleData()" class="text-xs bg-indigo-50 dark:bg-indigo-600/20 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-600/30 border border-indigo-200 dark:border-indigo-500/30 px-4 py-2.5 rounded-xl font-medium transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-file-import"></i> <span id="txt-btn-sample-data">Örnek Verileri Yükle</span>
+                            </button>
+                            <button onclick="clearAllData()" class="text-xs bg-rose-50 dark:bg-rose-600/20 text-rose-600 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-600/30 border border-rose-200 dark:border-rose-500/30 px-4 py-2.5 rounded-xl font-medium transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-trash-can"></i> <span id="txt-btn-clear-data">Tüm Verileri Temizle</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- MODAL 1: YENİ GÖREV EKLEME -->
+    <div id="add-task-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl w-full max-w-md p-6 space-y-4 shadow-2xl transition-colors duration-300">
+            <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
+                <h3 id="txt-modal-add-title" class="font-bold text-slate-800 dark:text-slate-100 text-sm">Yeni Görev Ekle</h3>
+                <button onclick="closeAddTaskModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="add-task-form" onsubmit="handleAddTask(event)" class="space-y-4 text-xs">
+                <div>
+                    <label id="lbl-task-title" class="block text-slate-500 dark:text-slate-400 mb-1">Görev Başlığı *</label>
+                    <input type="text" id="input-title" required placeholder="Örn: Haftalık raporu hazırla" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2.5 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label id="lbl-task-category" class="block text-slate-500 dark:text-slate-400 mb-1">Kategori</label>
+                        <select id="input-category" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2.5 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500">
+                            <option value="İş">İş</option>
+                            <option value="Kişisel">Kişisel</option>
+                            <option value="Eğitim">Eğitim</option>
+                            <option value="Sağlık">Sağlık</option>
+                            <option value="Alışveriş">Alışveriş</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label id="lbl-task-priority" class="block text-slate-500 dark:text-slate-400 mb-1">Öncelik</label>
+                        <select id="input-priority" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2.5 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500">
+                            <option value="Düşük">Düşük</option>
+                            <option value="Orta" selected>Orta</option>
+                            <option value="Yüksek">Yüksek</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label id="lbl-task-status" class="block text-slate-500 dark:text-slate-400 mb-1">Durum</label>
+                    <select id="input-status" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2.5 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500">
+                        <option value="Bekliyor">Bekliyor</option>
+                        <option value="Devam Ediyor" selected>Devam Ediyor</option>
+                        <option value="Tamamlandı">Tamamlandı</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label id="lbl-task-desc" class="block text-slate-500 dark:text-slate-400 mb-1">Açıklama</label>
+                    <textarea id="input-desc" rows="3" placeholder="Görev detayları..." class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+                </div>
+
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeAddTaskModal()" id="btn-cancel" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-700">İptal</button>
+                    <button type="submit" id="btn-save" class="px-4 py-2 rounded-xl bg-indigo-600 text-white font-medium hover:bg-indigo-500 shadow-md shadow-indigo-600/20">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: GİRİŞ YAP & KAYIT OL -->
+    <div id="login-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center hidden">
+        <div class="login-card-container">
+            <button onclick="closeLoginModal()" class="close-modal-btn">&times;</button>
+            
+            <div class="content">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 shrink-0">
+                        <i class="fa-solid fa-chart-pie text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-white text-xl leading-none">TaskFlow</h1>
+                        <span id="txt-modal-subtitle" class="text-xs text-slate-300">Görev & Analiz</span>
+                    </div>
+                </div>
+
+                <div class="text-sci">
+                    <h2 id="txt-welcome-title">Hoş Geldiniz!<br><span>Görev & Analiz Paneli</span></h2>
+                    <p id="txt-welcome-desc">Projelerinizi yönetmek, analizleri incelemek ve ekibinizle senkronize kalmak için hesabınıza giriş yapın.</p>
+
+                    <div class="social-icons">
+                        <a href="#"><i class="bx bxl-linkedin"></i></a>
+                        <a href="#"><i class="bx bxl-facebook"></i></a>
+                        <a href="#"><i class="bx bxl-instagram"></i></a>
+                        <a href="#"><i class="bx bxl-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="logreg-box active">
+                <!-- Giriş Formu -->
+                <div class="form-box login">
+                    <form action="#" onsubmit="handleLoginSubmit(event)">
+                        <h2 id="txt-login-header">Giriş Yap</h2>
+
+                        <!-- KIRMIZI HATA KUTUSU (Şifre Yanlış Olduğunda Görünür) -->
+                        <div id="login-error-alert" class="hidden mb-3 p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs flex items-center gap-2 animate-bounce">
+                            <i class="fa-solid fa-triangle-exclamation text-rose-400 text-sm"></i>
+                            <span id="login-error-text">Hatalı şifre girdiniz! Lütfen tekrar deneyin.</span>
+                        </div>
+
+                        <div class="input-box">
+                            <span class="icon"><i class="bx bxs-envelope"></i></span>
+                            <input type="email" id="login-email" required>
+                            <label id="lbl-login-email">Mail</label>
+                        </div>
+                        <div class="input-box">
+                            <span class="icon"><i class="bx bxs-lock-alt"></i></span>
+                            <input type="password" id="login-password" required>
+                            <label id="lbl-login-password">Şifre</label>
+                        </div>
+
+                        <div class="remember-forgot">
+                            <label><input type="checkbox"> <span id="lbl-remember">Beni Hatırla</span></label>
+                            <a href="#" id="lbl-forgot">Şifreni mi unuttun?</a>
+                        </div>
+                        <button type="submit" id="btn-login-submit" class="login-btn-submit">Giriş Yap</button>
+
+                        <div class="login-register">
+                            <p><span id="lbl-no-account">Bir hesabın yok mu?</span> <a href="#" class="register-link" id="lnk-register">Kayıt ol</a></p>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Kayıt Formu -->
+                <div class="form-box register">
+                    <form action="#" onsubmit="handleRegisterSubmit(event)">
+                        <h2 id="txt-register-header">Kayıt Ol</h2>
+
+                        <div class="input-box">
+                            <span class="icon"><i class="bx bxs-user"></i></span>
+                            <input type="text" id="reg-name" required>
+                            <label id="lbl-reg-name">İsim</label>
+                        </div>
+
+                        <div class="input-box">
+                            <span class="icon"><i class="bx bxs-envelope"></i></span>
+                            <input type="email" id="reg-email" required>
+                            <label id="lbl-reg-email">Mail</label>
+                        </div>
+                        <div class="input-box">
+                            <span class="icon"><i class="bx bxs-lock-alt"></i></span>
+                            <input type="password" id="reg-password" required>
+                            <label id="lbl-reg-password">Şifre</label>
+                        </div>
+
+                        <div class="remember-forgot">
+                            <label><input type="checkbox" required> <span id="lbl-terms">Şartları kabul ediyorum</span></label>
+                        </div>
+                        <button type="submit" id="btn-register-submit" class="login-btn-submit">Kayıt Ol</button>
+
+                        <div class="login-register">
+                            <p><span id="lbl-have-account">Zaten bir hesabın var mı?</span> <a href="#" class="login-link" id="lnk-login">Giriş yap</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT MANTIĞI -->
+    <script>
+        // Dil Çeviri Nesnesi (i18n)
+        const translations = {
+            tr: {
+                appSubtitle: "Görev & Analiz",
+                navTasks: "Görevler",
+                navAnalytics: "Analizler",
+                navSettings: "Ayarlar",
+                guestUser: "Misafir Kullanıcı",
+                userRole: "Proje Yöneticisi",
+                btnAddTask: "Yeni Görev",
+                btnLogin: "Giriş Yap",
+                statTotal: "Toplam Görev",
+                statCompleted: "Tamamlanan",
+                statInProgress: "Devam Eden",
+                statPending: "Bekleyen",
+                filterAll: "Tümü",
+                filterWork: "İş",
+                filterPersonal: "Kişisel",
+                filterEducation: "Eğitim",
+                filterHealth: "Sağlık",
+                filterShopping: "Alışveriş",
+                searchPlaceholder: "Görevlerde ara...",
+                analyticsTitle: "Kategori ve Durum Analizleri",
+                analyticsSubtitle: "Görevlerin kategorilere ve durumlara göre görsel dağılımı",
+                btnRefresh: "Grafiği Yenile",
+                chartCatTitle: "Kategori Bazlı Görev Dağılımı",
+                chartStatusTitle: "Görev Durumu Dağılımı",
+                chartStatusSub: "Tamamlanan, Devam Eden ve Bekleyenler",
+                tableTitle: "Kategori Detay İstatistikleri",
+                thCategory: "Kategori",
+                thCount: "Görev Sayısı",
+                thRatio: "Oran (%)",
+                thProgress: "İlerleme",
+                settingsProfile: "Kullanıcı Profili",
+                settingsName: "Ad Soyad",
+                settingsEmail: "E-Posta",
+                settingsData: "Veri Yönetimi",
+                settingsDataDesc: "Sistemdeki verileri sıfırlayabilir veya varsayılan örnek görevleri yükleyebilirsiniz.",
+                btnSampleData: "Örnek Verileri Yükle",
+                btnClearData: "Tüm Verileri Temizle",
+                modalAddTitle: "Yeni Görev Ekle",
+                lblTaskTitle: "Görev Başlığı *",
+                lblTaskCat: "Kategori",
+                lblTaskPriority: "Öncelik",
+                lblTaskStatus: "Durum",
+                lblTaskDesc: "Açıklama",
+                btnCancel: "İptal",
+                btnSave: "Kaydet",
+                welcomeTitle: "Hoş Geldiniz!<br><span>Görev & Analiz Paneli</span>",
+                welcomeDesc: "Projelerinizi yönetmek, analizleri incelemek ve ekibinizle senkronize kalmak için hesabınıza giriş yapın.",
+                loginHeader: "Giriş Yap",
+                lblLoginEmail: "Mail",
+                lblLoginPass: "Şifre",
+                lblRemember: "Beni Hatırla",
+                lblForgot: "Şifreni mi unuttun?",
+                lblNoAccount: "Bir hesabın yok mu?",
+                lnkRegister: "Kayıt ol",
+                regHeader: "Kayıt Ol",
+                lblRegName: "İsim",
+                lblRegEmail: "Mail",
+                lblRegPass: "Şifre",
+                lblTerms: "Şartları kabul ediyorum",
+                lblHaveAccount: "Zaten bir hesabın var mı?",
+                lnkLogin: "Giriş yap",
+                tasksTitle: "Görev Yönetimi",
+                tasksSub: "Tüm Aktif Görevler",
+                analyticsTitleNav: "Analiz & İstatistikler",
+                analyticsSubNav: "Chart.js Kategori Dağılımı",
+                settingsTitleNav: "Sistem Ayarları",
+                settingsSubNav: "Genel Yapılandırma",
+                noTasks: "Görev bulunamadı.",
+                priorityHigh: "Yüksek",
+                priorityMedium: "Orta",
+                priorityLow: "Düşük",
+                statusCompleted: "Tamamlandı",
+                statusInProgress: "Devam Ediyor",
+                statusPending: "Bekliyor",
+                errWrongPass: "Hatalı şifre girdiniz! Lütfen tekrar deneyin."
+            },
+            en: {
+                appSubtitle: "Task & Analytics",
+                navTasks: "Tasks",
+                navAnalytics: "Analytics",
+                navSettings: "Settings",
+                guestUser: "Guest User",
+                userRole: "Project Manager",
+                btnAddTask: "New Task",
+                btnLogin: "Login",
+                statTotal: "Total Tasks",
+                statCompleted: "Completed",
+                statInProgress: "In Progress",
+                statPending: "Pending",
+                filterAll: "All",
+                filterWork: "Work",
+                filterPersonal: "Personal",
+                filterEducation: "Education",
+                filterHealth: "Health",
+                filterShopping: "Shopping",
+                searchPlaceholder: "Search tasks...",
+                analyticsTitle: "Category & Status Analytics",
+                analyticsSubtitle: "Visual distribution of tasks by category and status",
+                btnRefresh: "Refresh Chart",
+                chartCatTitle: "Task Distribution by Category",
+                chartStatusTitle: "Task Status Distribution",
+                chartStatusSub: "Completed, In Progress and Pending",
+                tableTitle: "Category Detail Statistics",
+                thCategory: "Category",
+                thCount: "Task Count",
+                thRatio: "Ratio (%)",
+                thProgress: "Progress",
+                settingsProfile: "User Profile",
+                settingsName: "Full Name",
+                settingsEmail: "E-Mail",
+                settingsData: "Data Management",
+                settingsDataDesc: "You can reset system data or load default sample tasks.",
+                btnSampleData: "Load Sample Data",
+                btnClearData: "Clear All Data",
+                modalAddTitle: "Add New Task",
+                lblTaskTitle: "Task Title *",
+                lblTaskCat: "Category",
+                lblTaskPriority: "Priority",
+                lblTaskStatus: "Status",
+                lblTaskDesc: "Description",
+                btnCancel: "Cancel",
+                btnSave: "Save",
+                welcomeTitle: "Welcome!<br><span>Task & Analytics Dashboard</span>",
+                welcomeDesc: "Log in to your account to manage projects, view analytics, and stay synchronized with your team.",
+                loginHeader: "Sign In",
+                lblLoginEmail: "Email",
+                lblLoginPass: "Password",
+                lblRemember: "Remember Me",
+                lblForgot: "Forgot password?",
+                lblNoAccount: "Don't have an account?",
+                lnkRegister: "Register",
+                regHeader: "Sign Up",
+                lblRegName: "Name",
+                lblRegEmail: "Email",
+                lblRegPass: "Password",
+                lblTerms: "I accept the terms",
+                lblHaveAccount: "Already have an account?",
+                lnkLogin: "Sign in",
+                tasksTitle: "Task Management",
+                tasksSub: "All Active Tasks",
+                analyticsTitleNav: "Analytics & Stats",
+                analyticsSubNav: "Chart.js Category Distribution",
+                settingsTitleNav: "System Settings",
+                settingsSubNav: "General Configuration",
+                noTasks: "No tasks found.",
+                priorityHigh: "High",
+                priorityMedium: "Medium",
+                priorityLow: "Low",
+                statusCompleted: "Completed",
+                statusInProgress: "In Progress",
+                statusPending: "Pending",
+                errWrongPass: "Incorrect password! Please try again."
+            }
+        };
+
+        // Current Language State
+        let currentLang = localStorage.getItem('app_lang') || 'tr';
+
+        // Kategori Renk Eşleşmeleri
+        const categoryColors = {
+            'İş': '#6366f1',
+            'Kişisel': '#ec4899',
+            'Eğitim': '#3b82f6',
+            'Sağlık': '#10b981',
+            'Alışveriş': '#f59e0b'
+        };
+
+        const statusColors = {
+            'Tamamlandı': '#10b981',
+            'Devam Ediyor': '#f59e0b',
+            'Bekliyor': '#f43f5e'
+        };
+
+        // Örnek Başlangıç Verileri
+        const defaultTasks = [
+            { id: 1, title: 'Proje Sunumu Hazırla', category: 'İş', priority: 'Yüksek', status: 'Devam Ediyor', desc: 'Müşteri toplantısı için slaytlar tamamlanacak.' },
+            { id: 2, title: 'Kitap Oku (20 Sayfa)', category: 'Kişisel', priority: 'Düşük', status: 'Tamamlandı', desc: 'Psikoloji kitabının 3. bölümü.' },
+            { id: 3, title: 'JavaScript & Chart.js Kursu', category: 'Eğitim', priority: 'Orta', status: 'Devam Ediyor', desc: 'Veri görselleştirme modülü izlenecek.' },
+            { id: 4, title: 'Egzersiz & Yürüyüş', category: 'Sağlık', priority: 'Orta', status: 'Tamamlandı', desc: '45 dakika açık hava yürüyüşü.' },
+            { id: 5, title: 'Haftalık Mutfak Alışverişi', category: 'Alışveriş', priority: 'Düşük', status: 'Bekliyor', desc: 'Meyve, sebze ve süt ürünleri alınacak.' },
+            { id: 6, title: 'Kod İnceleme (Code Review)', category: 'İş', priority: 'Yüksek', status: 'Tamamlandı', desc: 'PR #104 incelenip onaylanacak.' }
+        ];
+
+        // State
+        let tasks = JSON.parse(localStorage.getItem('app_tasks')) || defaultTasks;
+        let activeFilter = 'all';
+        let searchQuery = '';
+        let registeredUser = null;
+
+        // Chart Instances
+        let categoryChartInstance = null;
+        let statusChartInstance = null;
+
+        // Sayfa Yüklendiğinde
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            applyLanguage();
+            renderTasks();
+            updateStats();
+            initLoginModalEvents();
+        });
+
+        // DİL YÖNETİMİ (i18n)
+        function toggleLanguage() {
+            currentLang = currentLang === 'tr' ? 'en' : 'tr';
+            localStorage.setItem('app_lang', currentLang);
+            applyLanguage();
+            renderTasks(); // Dil değiştiğinde kartların dinamik metinlerini güncelle
+            if (!document.getElementById('view-analytics').classList.contains('hidden')) {
+                initOrUpdateCharts();
+            }
+        }
+
+        function applyLanguage() {
+            const t = translations[currentLang];
+            document.getElementById('lang-btn-text').innerText = currentLang.toUpperCase();
+
+            // Metin Değişimleri
+            document.getElementById('txt-app-subtitle').innerText = t.appSubtitle;
+            document.getElementById('txt-nav-tasks').innerText = t.navTasks;
+            document.getElementById('txt-nav-analytics').innerText = t.navAnalytics;
+            document.getElementById('txt-nav-settings').innerText = t.navSettings;
+            if(document.getElementById('sidebar-user-name').innerText === "Misafir Kullanıcı" || document.getElementById('sidebar-user-name').innerText === "Guest User") {
+                document.getElementById('sidebar-user-name').innerText = t.guestUser;
+            }
+            document.getElementById('txt-user-role').innerText = t.userRole;
+            document.getElementById('txt-btn-add-task').innerText = t.btnAddTask;
+            document.getElementById('txt-btn-login').innerText = t.btnLogin;
+
+            document.getElementById('txt-stat-total').innerText = t.statTotal;
+            document.getElementById('txt-stat-completed').innerText = t.statCompleted;
+            document.getElementById('txt-stat-inprogress').innerText = t.statInProgress;
+            document.getElementById('txt-stat-pending').innerText = t.statPending;
+
+            document.getElementById('btn-filter-all').innerText = t.filterAll;
+            document.getElementById('btn-filter-work').innerText = t.filterWork;
+            document.getElementById('btn-filter-personal').innerText = t.filterPersonal;
+            document.getElementById('btn-filter-education').innerText = t.filterEducation;
+            document.getElementById('btn-filter-health').innerText = t.filterHealth;
+            document.getElementById('btn-filter-shopping').innerText = t.filterShopping;
+            document.getElementById('task-search').placeholder = t.searchPlaceholder;
+
+            document.getElementById('txt-analytics-title').innerText = t.analyticsTitle;
+            document.getElementById('txt-analytics-subtitle').innerText = t.analyticsSubtitle;
+            document.getElementById('txt-btn-refresh').innerText = t.btnRefresh;
+            document.getElementById('txt-chart-category-title').innerText = t.chartCatTitle;
+            document.getElementById('txt-chart-status-title').innerText = t.chartStatusTitle;
+            document.getElementById('txt-chart-status-sub').innerText = t.chartStatusSub;
+            document.getElementById('txt-table-title').innerText = t.tableTitle;
+
+            document.getElementById('th-category').innerText = t.thCategory;
+            document.getElementById('th-count').innerText = t.thCount;
+            document.getElementById('th-ratio').innerText = t.thRatio;
+            document.getElementById('th-progress').innerText = t.thProgress;
+
+            document.getElementById('txt-settings-profile').innerHTML = `<i class="fa-solid fa-user text-indigo-500 dark:text-indigo-400"></i> ${t.settingsProfile}`;
+            document.getElementById('lbl-settings-name').innerText = t.settingsName;
+            document.getElementById('lbl-settings-email').innerText = t.settingsEmail;
+            document.getElementById('txt-settings-data').innerHTML = `<i class="fa-solid fa-database text-indigo-500 dark:text-indigo-400"></i> ${t.settingsData}`;
+            document.getElementById('txt-settings-data-desc').innerText = t.settingsDataDesc;
+            document.getElementById('txt-btn-sample-data').innerText = t.btnSampleData;
+            document.getElementById('txt-btn-clear-data').innerText = t.btnClearData;
+
+            document.getElementById('txt-modal-add-title').innerText = t.modalAddTitle;
+            document.getElementById('lbl-task-title').innerText = t.lblTaskTitle;
+            document.getElementById('lbl-task-category').innerText = t.lblTaskCat;
+            document.getElementById('lbl-task-priority').innerText = t.lblTaskPriority;
+            document.getElementById('lbl-task-status').innerText = t.lblTaskStatus;
+            document.getElementById('lbl-task-desc').innerText = t.lblTaskDesc;
+            document.getElementById('btn-cancel').innerText = t.btnCancel;
+            document.getElementById('btn-save').innerText = t.btnSave;
+
+            document.getElementById('txt-modal-subtitle').innerText = t.appSubtitle;
+            document.getElementById('txt-welcome-title').innerHTML = t.welcomeTitle;
+            document.getElementById('txt-welcome-desc').innerText = t.welcomeDesc;
+            document.getElementById('txt-login-header').innerText = t.loginHeader;
+            document.getElementById('lbl-login-email').innerText = t.lblLoginEmail;
+            document.getElementById('lbl-login-password').innerText = t.lblLoginPass;
+            document.getElementById('lbl-remember').innerText = t.lblRemember;
+            document.getElementById('lbl-forgot').innerText = t.lblForgot;
+            document.getElementById('btn-login-submit').innerText = t.loginHeader;
+            document.getElementById('lbl-no-account').innerText = t.lblNoAccount;
+            document.getElementById('lnk-register').innerText = t.lnkRegister;
+
+            document.getElementById('txt-register-header').innerText = t.regHeader;
+            document.getElementById('lbl-reg-name').innerText = t.lblRegName;
+            document.getElementById('lbl-reg-email').innerText = t.lblRegEmail;
+            document.getElementById('lbl-reg-password').innerText = t.lblRegPass;
+            document.getElementById('lbl-terms').innerText = t.lblTerms;
+            document.getElementById('btn-register-submit').innerText = t.regHeader;
+            document.getElementById('lbl-have-account').innerText = t.lblHaveAccount;
+            document.getElementById('lnk-login').innerText = t.lnkLogin;
+
+            // Header Başlıklarını Güncelle
+            const activeTab = !document.getElementById('view-tasks').classList.contains('hidden') ? 'tasks' :
+                              !document.getElementById('view-analytics').classList.contains('hidden') ? 'analytics' : 'settings';
+            
+            const titleMap = {
+                'tasks': [t.tasksTitle, t.tasksSub],
+                'analytics': [t.analyticsTitleNav, t.analyticsSubNav],
+                'settings': [t.settingsTitleNav, t.settingsSubNav]
+            };
+            document.getElementById('page-title').innerText = titleMap[activeTab][0];
+            document.getElementById('page-subtitle').innerText = titleMap[activeTab][1];
+        }
+
+        // GECE - GÜNDÜZ MODU İŞLEMLERİ
+        function initTheme() {
+            const savedTheme = localStorage.getItem('app_theme');
+            const icon = document.getElementById('theme-toggle-icon');
+            
+            if (savedTheme === 'light') {
+                document.documentElement.classList.remove('dark');
+                if (icon) icon.className = 'fa-solid fa-moon text-base';
+            } else {
+                document.documentElement.classList.add('dark');
+                if (icon) icon.className = 'fa-solid fa-sun text-base';
+            }
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-toggle-icon');
+            
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('app_theme', 'light');
+                if (icon) icon.className = 'fa-solid fa-moon text-base';
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('app_theme', 'dark');
+                if (icon) icon.className = 'fa-solid fa-sun text-base';
+            }
+
+            if (!document.getElementById('view-analytics').classList.contains('hidden')) {
+                initOrUpdateCharts();
+            }
+        }
+
+        // MODAL VE KULLANICI İŞLEMLERİ
+        function openLoginModal() {
+            hideLoginError();
+            document.getElementById('login-modal').classList.remove('hidden');
+        }
+
+        function closeLoginModal() {
+            document.getElementById('login-modal').classList.add('hidden');
+            hideLoginError();
+        }
+
+        function hideLoginError() {
+            const errAlert = document.getElementById('login-error-alert');
+            if(errAlert) errAlert.classList.add('hidden');
+        }
+
+        function showLoginError(msg) {
+            const errAlert = document.getElementById('login-error-alert');
+            const errText = document.getElementById('login-error-text');
+            if(errAlert && errText) {
+                errText.innerText = msg;
+                errAlert.classList.remove('hidden');
+            }
+        }
+
+        function initLoginModalEvents() {
+            const logregBox = document.querySelector('.logreg-box');
+            const loginLink = document.querySelector('.login-link');
+            const registerLink = document.querySelector('.register-link');
+
+            if (registerLink && loginLink && logregBox) {
+                registerLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    hideLoginError();
+                    logregBox.classList.add('active');
+                });
+
+                loginLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    hideLoginError();
+                    logregBox.classList.remove('active');
+                });
+            }
+
+            const passInput = document.getElementById('login-password');
+            if (passInput) {
+                passInput.addEventListener('input', hideLoginError);
+            }
+        }
+
+        function handleRegisterSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+
+            registeredUser = { name, email, password };
+
+            const loginEmailInput = document.getElementById('login-email');
+            loginEmailInput.value = email;
+
+            hideLoginError();
+            const logregBox = document.querySelector('.logreg-box');
+            logregBox.classList.remove('active');
+        }
+
+        function handleLoginSubmit(e) {
+            e.preventDefault();
+            
+            let userEmail = document.getElementById('login-email').value;
+            let userPassword = document.getElementById('login-password').value;
+
+            if (registeredUser) {
+                if (registeredUser.email === userEmail && registeredUser.password !== userPassword) {
+                    showLoginError(translations[currentLang].errWrongPass);
+                    return;
+                }
+            }
+
+            let userName = translations[currentLang].guestUser;
+            if (registeredUser && registeredUser.email === userEmail) {
+                userName = registeredUser.name;
+            } else {
+                userName = userEmail.split('@')[0];
+            }
+
+            document.getElementById('sidebar-user-name').innerText = userName;
+
+            document.getElementById('settings-name').value = userName;
+            document.getElementById('settings-email').value = userEmail;
+
+            closeLoginModal();
+        }
+
+        // Tab Değiştirme Fonksiyonu
+        function switchTab(tabName) {
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-indigo-600', 'text-white', 'shadow-lg', 'shadow-indigo-600/20');
+                btn.classList.add('text-slate-500', 'dark:text-slate-400', 'hover:text-slate-800', 'dark:hover:text-slate-200', 'hover:bg-slate-100', 'dark:hover:bg-slate-800/60');
+            });
+
+            const activeBtn = document.getElementById(`nav-${tabName}`);
+            activeBtn.classList.add('bg-indigo-600', 'text-white', 'shadow-lg', 'shadow-indigo-600/20');
+            activeBtn.classList.remove('text-slate-500', 'dark:text-slate-400', 'hover:text-slate-800', 'dark:hover:text-slate-200', 'hover:bg-slate-100', 'dark:hover:bg-slate-800/60');
+
+            document.getElementById('view-tasks').classList.add('hidden');
+            document.getElementById('view-analytics').classList.add('hidden');
+            document.getElementById('view-settings').classList.add('hidden');
+
+            document.getElementById(`view-${tabName}`).classList.remove('hidden');
+
+            const t = translations[currentLang];
+            const titleMap = {
+                'tasks': [t.tasksTitle, t.tasksSub],
+                'analytics': [t.analyticsTitleNav, t.analyticsSubNav],
+                'settings': [t.settingsTitleNav, t.settingsSubNav]
+            };
+            document.getElementById('page-title').innerText = titleMap[tabName][0];
+            document.getElementById('page-subtitle').innerText = titleMap[tabName][1];
+
+            if (tabName === 'analytics') {
+                setTimeout(initOrUpdateCharts, 50);
+            }
+        }
+
+        // Görev Liste Mantığı
+        function renderTasks() {
+            const container = document.getElementById('tasks-container');
+            container.innerHTML = '';
+            const t = translations[currentLang];
+
+            let filtered = tasks.filter(task => {
+                const matchesFilter = activeFilter === 'all' || task.category === activeFilter;
+                const matchesSearch = task.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                      task.desc.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesFilter && matchesSearch;
+            });
+
+            document.getElementById('task-badge').innerText = tasks.length;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full py-12 text-center text-slate-400 dark:text-slate-500">
+                        <i class="fa-solid fa-inbox text-4xl mb-3 block"></i>
+                        <p class="text-sm">${t.noTasks}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(task => {
+                const priorityBadge = {
+                    'Yüksek': 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20',
+                    'Orta': 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20',
+                    'Düşük': 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'
+                }[task.priority];
+
+                const statusBadge = {
+                    'Tamamlandı': 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
+                    'Devam Ediyor': 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20',
+                    'Bekliyor': 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20'
+                }[task.status];
+
+                // Dil bazlı öncelik ve durum metni eşleştirme
+                const displayPriority = task.priority === 'Yüksek' ? t.priorityHigh : task.priority === 'Orta' ? t.priorityMedium : t.priorityLow;
+                const displayStatus = task.status === 'Tamamlandı' ? t.statusCompleted : task.status === 'Devam Ediyor' ? t.statusInProgress : t.statusPending;
+                const displayCategory = currentLang === 'en' ? (t['filter' + Object.keys(categoryColors).find(k => k === task.category)] || task.category) : task.category;
+
+                const card = document.createElement('div');
+                card.className = 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 flex flex-col justify-between hover:border-slate-300 dark:hover:border-slate-700 transition-all shadow-sm group';
+                card.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-[10px] px-2.5 py-1 rounded-lg border font-semibold" style="background-color: ${categoryColors[task.category]}15; color: ${categoryColors[task.category]}; border-color: ${categoryColors[task.category]}30">
+                                ${displayCategory}
+                            </span>
+                            <span class="text-[10px] px-2.5 py-1 rounded-lg border font-medium ${priorityBadge}">
+                                ${displayPriority}
+                            </span>
+                        </div>
+
+                        <div>
+                            <h4 class="font-bold text-slate-800 dark:text-slate-100 text-sm ${task.status === 'Tamamlandı' ? 'line-through text-slate-400 dark:text-slate-500' : ''}">${task.title}</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">${task.desc || '-'}</p>
+                        </div>
+                    </div>
+
+                    <div class="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
+                        <button onclick="toggleTaskStatus(${task.id})" class="text-xs px-2.5 py-1 rounded-lg border font-medium ${statusBadge} flex items-center gap-1.5 hover:opacity-80 transition-opacity">
+                            <i class="fa-solid ${task.status === 'Tamamlandı' ? 'fa-check' : 'fa-spinner'}"></i>
+                            <span>${displayStatus}</span>
+                        </button>
+
+                        <button onclick="deleteTask(${task.id})" class="text-slate-400 hover:text-rose-500 p-1 transition-colors">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function filterTasks(cat) {
+            activeFilter = cat;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-indigo-600', 'text-white');
+                btn.classList.add('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-400');
+            });
+            event.target.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-400');
+            event.target.classList.add('bg-indigo-600', 'text-white');
+            renderTasks();
+        }
+
+        function searchTasks() {
+            searchQuery = document.getElementById('task-search').value;
+            renderTasks();
+        }
+
+        function toggleTaskStatus(id) {
+            const task = tasks.find(t => t.id === id);
+            if (!task) return;
+
+            const nextStatus = {
+                'Bekliyor': 'Devam Ediyor',
+                'Devam Ediyor': 'Tamamlandı',
+                'Tamamlandı': 'Bekliyor'
+            };
+
+            task.status = nextStatus[task.status];
+            saveTasks();
+            renderTasks();
+            updateStats();
+        }
+
+        function deleteTask(id) {
+            tasks = tasks.filter(t => t.id !== id);
+            saveTasks();
+            renderTasks();
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('stat-total').innerText = tasks.length;
+            document.getElementById('stat-completed').innerText = tasks.filter(t => t.status === 'Tamamlandı').length;
+            document.getElementById('stat-inprogress').innerText = tasks.filter(t => t.status === 'Devam Ediyor').length;
+            document.getElementById('stat-pending').innerText = tasks.filter(t => t.status === 'Bekliyor').length;
+        }
+
+        function openAddTaskModal() {
+            document.getElementById('add-task-modal').classList.remove('hidden');
+        }
+
+        function closeAddTaskModal() {
+            document.getElementById('add-task-modal').classList.add('hidden');
+            document.getElementById('add-task-form').reset();
+        }
+
+        function handleAddTask(e) {
+            e.preventDefault();
+            const newTask = {
+                id: Date.now(),
+                title: document.getElementById('input-title').value,
+                category: document.getElementById('input-category').value,
+                priority: document.getElementById('input-priority').value,
+                status: document.getElementById('input-status').value,
+                desc: document.getElementById('input-desc').value
+            };
+
+            tasks.unshift(newTask);
+            saveTasks();
+            renderTasks();
+            updateStats();
+            closeAddTaskModal();
+        }
+
+        function saveTasks() {
+            localStorage.setItem('app_tasks', JSON.stringify(tasks));
+        }
+
+        // CHART.JS VE ANALİZ MANTIĞI
+        function initOrUpdateCharts() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const borderColor = isDark ? '#0f172a' : '#ffffff';
+            const t = translations[currentLang];
+
+            const categories = ['İş', 'Kişisel', 'Eğitim', 'Sağlık', 'Alışveriş'];
+            const categoryCounts = categories.map(cat => tasks.filter(t => t.category === cat).length);
+            
+            const completedCount = tasks.filter(t => t.status === 'Tamamlandı').length;
+            const inProgressCount = tasks.filter(t => t.status === 'Devam Ediyor').length;
+            const pendingCount = tasks.filter(t => t.status === 'Bekliyor').length;
+
+            const ctxPie = document.getElementById('categoryPieChart').getContext('2d');
+            if (categoryChartInstance) categoryChartInstance.destroy();
+
+            categoryChartInstance = new Chart(ctxPie, {
+                type: 'pie',
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        data: categoryCounts,
+                        backgroundColor: categories.map(c => categoryColors[c]),
+                        borderWidth: 2,
+                        borderColor: borderColor
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+
+            const ctxDoughnut = document.getElementById('statusDoughnutChart').getContext('2d');
+            if (statusChartInstance) statusChartInstance.destroy();
+
+            statusChartInstance = new Chart(ctxDoughnut, {
+                type: 'doughnut',
+                data: {
+                    labels: [t.statusCompleted, t.statusInProgress, t.statusPending],
+                    datasets: [{
+                        data: [completedCount, inProgressCount, pendingCount],
+                        backgroundColor: [statusColors['Tamamlandı'], statusColors['Devam Ediyor'], statusColors['Bekliyor']],
+                        borderWidth: 2,
+                        borderColor: borderColor
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+
+            renderCategoryLegend(categories, categoryCounts);
+            renderStatusLegend(completedCount, inProgressCount, pendingCount);
+            renderAnalyticsTable(categories, categoryCounts);
+        }
+
+        function renderCategoryLegend(categories, counts) {
+            const legendContainer = document.getElementById('category-legend');
+            legendContainer.innerHTML = '';
+            const total = tasks.length || 1;
+            const t = translations[currentLang];
+
+            categories.forEach((cat, idx) => {
+                const count = counts[idx];
+                const percent = Math.round((count / total) * 100);
+                const displayCat = currentLang === 'en' ? (t['filter' + Object.keys(categoryColors).find(k => k === cat)] || cat) : cat;
+
+                const item = document.createElement('div');
+                item.className = 'flex items-center gap-2 p-1.5 rounded-lg bg-slate-100 dark:bg-slate-950/50';
+                item.innerHTML = `
+                    <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${categoryColors[cat]}"></span>
+                    <span class="text-slate-700 dark:text-slate-300 truncate">${displayCat}</span>
+                    <span class="ml-auto font-bold text-slate-500 dark:text-slate-400">${count} (${percent}%)</span>
+                `;
+                legendContainer.appendChild(item);
+            });
+        }
+
+        function renderStatusLegend(comp, prog, pend) {
+            const legendContainer = document.getElementById('status-legend');
+            const t = translations[currentLang];
+            legendContainer.innerHTML = `
+                <div class="p-2 bg-slate-100 dark:bg-slate-950/50 rounded-xl">
+                    <p class="text-emerald-600 dark:text-emerald-400 font-bold text-sm">${comp}</p>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400">${t.statusCompleted}</p>
+                </div>
+                <div class="p-2 bg-slate-100 dark:bg-slate-950/50 rounded-xl">
+                    <p class="text-amber-600 dark:text-amber-400 font-bold text-sm">${prog}</p>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400">${t.statusInProgress}</p>
+                </div>
+                <div class="p-2 bg-slate-100 dark:bg-slate-950/50 rounded-xl">
+                    <p class="text-rose-600 dark:text-rose-400 font-bold text-sm">${pend}</p>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400">${t.statusPending}</p>
+                </div>
+            `;
+        }
+
+        function renderAnalyticsTable(categories, counts) {
+            const tbody = document.getElementById('analytics-table-body');
+            tbody.innerHTML = '';
+            const total = tasks.length || 1;
+            const t = translations[currentLang];
+
+            categories.forEach((cat, idx) => {
+                const count = counts[idx];
+                const percent = Math.round((count / total) * 100);
+                const displayCat = currentLang === 'en' ? (t['filter' + Object.keys(categoryColors).find(k => k === cat)] || cat) : cat;
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-4 py-3 flex items-center gap-2 font-medium">
+                        <span class="w-2 h-2 rounded-full" style="background-color: ${categoryColors[cat]}"></span>
+                        ${displayCat}
+                    </td>
+                    <td class="px-4 py-3 text-slate-800 dark:text-slate-200 font-semibold">${count} ${currentLang === 'en' ? 'Tasks' : 'Görev'}</td>
+                    <td class="px-4 py-3 text-slate-500 dark:text-slate-400">%${percent}</td>
+                    <td class="px-4 py-3 w-32">
+                        <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
+                            <div class="h-full rounded-full" style="width: ${percent}%; background-color: ${categoryColors[cat]}"></div>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function refreshAnalytics() {
+            initOrUpdateCharts();
+        }
+
+        function loadSampleData() {
+            tasks = [...defaultTasks];
+            saveTasks();
+            renderTasks();
+            updateStats();
+            alert(currentLang === 'en' ? 'Sample data loaded successfully!' : 'Örnek veriler başarıyla yüklendi!');
+        }
+
+        function clearAllData() {
+            const msg = currentLang === 'en' ? 'Are you sure you want to delete all tasks?' : 'Tüm görevleri silmek istediğinize emin misiniz?';
+            if (confirm(msg)) {
+                tasks = [];
+                saveTasks();
+                renderTasks();
+                updateStats();
+            }
+        }
+    </script>
+</body>
+</html>
