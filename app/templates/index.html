@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}Görev & Veri Paneli | DevBoard{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h2>Genel Bakış</h2>
+    <button class="btn btn-primary" id="openModalBtn">
+        <i class="fa-solid fa-plus"></i> Yeni Görev Ekle
+    </button>
+</div>
+
+<!-- Özet İstatistik Kartları -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon icon-blue"><i class="fa-solid fa-tasks"></i></div>
+        <div class="stat-info">
+            <span class="stat-label">Toplam Görev</span>
+            <h3 id="statTotal">0</h3>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon icon-yellow"><i class="fa-solid fa-spinner"></i></div>
+        <div class="stat-info">
+            <span class="stat-label">Devam Eden</span>
+            <h3 id="statPending">0</h3>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon icon-green"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="stat-info">
+            <span class="stat-label">Tamamlanan</span>
+            <h3 id="statCompleted">0</h3>
+        </div>
+    </div>
+</div>
+
+<!-- Ana Görünüm: Tablo ve Grafik Yan Yana -->
+<div class="dashboard-grid">
+    <!-- Interaktif Görev Tablosu -->
+    <div class="card table-card">
+        <div class="card-header">
+            <h3>Görev Listesi</h3>
+            <span class="badge" id="taskCountBadge">0 Görev</span>
+        </div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Görev Adı</th>
+                        <th>Kategori</th>
+                        <th>Durum</th>
+                        <th>Eylemler</th>
+                    </tr>
+                </thead>
+                <tbody id="taskTableBody">
+                    <!-- JavaScript ile dinamik dolacak -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- İlerleme / Grafik Alanı -->
+    <div class="card chart-card">
+        <div class="card-header">
+            <h3>Tamamlanma Oranı</h3>
+        </div>
+        <div class="chart-container">
+            <div class="progress-circle-wrapper">
+                <div class="progress-value" id="progressPercentage">0%</div>
+            </div>
+            <p class="chart-desc">Toplam görevlerin tamamlanma yüzdesi</p>
+        </div>
+    </div>
+</div>
+
+<!-- Yeni Görev Ekleme Modalı (Popup) -->
+<div class="modal" id="taskModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Yeni Görev Oluştur</h3>
+            <button class="close-btn" id="closeModalBtn">&times;</button>
+        </div>
+        <form id="taskForm">
+            <div class="form-group">
+                <label for="taskTitle">Görev Başlığı</label>
+                <input type="text" id="taskTitle" required placeholder="Örn: Veritabanı yedeklemesi yap">
+            </div>
+            <div class="form-group">
+                <label for="taskCategory">Kategori</label>
+                <select id="taskCategory">
+                    <option value="Geliştirme">Geliştirme</option>
+                    <option value="Tasarım">Tasarım</option>
+                    <option value="Sistem">Sistem</option>
+                    <option value="Genel">Genel</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelModalBtn">İptal</button>
+                <button type="submit" class="btn btn-primary">Kaydet</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
